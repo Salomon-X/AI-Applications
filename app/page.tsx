@@ -1,5 +1,3 @@
-// app/page.tsx
-
 "use client";
 
 import React, { useState } from 'react';
@@ -8,10 +6,12 @@ import Footer from './components/footer';
 import Home from './components/Home';
 import ObjectIdentifier from './components/ObjectIdentifier';
 import ImageToText from './components/ImageToText';
+import TextGeneration from './components/TextGeneration';
+import TextSummarization from './components/TextSummarization'; // Import the new service component
 import Services from './components/services';
 
 export default function Page() {
-  const [view, setView] = useState<'hero' | 'services' | 'objectIdentifier' | 'imageToText'>('hero');
+  const [view, setView] = useState<'hero' | 'services' | 'objectIdentifier' | 'imageToText' | 'textGeneration' | 'textSummarization'>('hero');
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
@@ -34,6 +34,14 @@ export default function Page() {
 
       {view === 'imageToText' && (
         <ImageToText />
+      )}
+
+      {view === 'textGeneration' && (
+        <TextGeneration />
+      )}
+
+      {view === 'textSummarization' && (
+        <TextSummarization />
       )}
 
       <Footer />
