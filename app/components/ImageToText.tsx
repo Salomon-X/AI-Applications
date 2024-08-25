@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 
 const ImageToText: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -19,7 +19,12 @@ const ImageToText: React.FC = () => {
     }
   };
 
-  const triggerFileSelect = () => {
+  const triggerFileSelect = (cameraMode: boolean = false) => {
+    if (cameraMode) {
+      fileInputRef.current?.setAttribute('capture', 'camera'); // Activate camera
+    } else {
+      fileInputRef.current?.removeAttribute('capture'); // Deactivate camera (open file picker)
+    }
     fileInputRef.current?.click();
   };
 
@@ -72,12 +77,20 @@ const ImageToText: React.FC = () => {
           onChange={handleImageUpload}
           className="hidden"
         />
-        <button
-          onClick={triggerFileSelect}
-          className="mb-6 bg-teal-500 text-white font-semibold text-lg px-6 py-3 rounded-lg w-full hover:bg-teal-600 transition-colors duration-300"
-        >
-          Select Image
-        </button>
+        <div className="flex space-x-4">
+          <button
+            onClick={() => triggerFileSelect(false)}
+            className="mb-6 bg-teal-500 text-white font-semibold text-lg px-6 py-3 rounded-lg w-full hover:bg-teal-600 transition-colors duration-300"
+          >
+            Select Image
+          </button>
+          <button
+            onClick={() => triggerFileSelect(true)}
+            className="mb-6 bg-teal-500 text-white font-semibold text-lg px-6 py-3 rounded-lg w-full hover:bg-teal-600 transition-colors duration-300"
+          >
+            Take Photo
+          </button>
+        </div>
 
         {previewImageUrl && (
           <div className="relative w-full h-auto mb-6">
