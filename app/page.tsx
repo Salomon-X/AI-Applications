@@ -7,11 +7,11 @@ import Navbar from './components/navbar';
 import Footer from './components/footer';
 import Home from './components/Home';
 import ObjectIdentifier from './components/ObjectIdentifier';
+import ImageToText from './components/ImageToText';
 import Services from './components/services';
 
 export default function Page() {
-  // Update the type to include 'anotherService'
-  const [view, setView] = useState<'hero' | 'services' | 'objectIdentifier' | 'anotherService'>('hero');
+  const [view, setView] = useState<'hero' | 'services' | 'objectIdentifier' | 'imageToText'>('hero');
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
@@ -32,12 +32,8 @@ export default function Page() {
         <ObjectIdentifier />
       )}
 
-      {view === 'anotherService' && (
-        <div className="flex-grow flex flex-col items-center justify-center p-6">
-          {/* Content for another service */}
-          <h1 className="text-5xl font-extrabold text-white mb-8">Another Service Application</h1>
-          {/* Add more details or components for the service here */}
-        </div>
+      {view === 'imageToText' && (
+        <ImageToText />
       )}
 
       <Footer />
