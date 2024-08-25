@@ -31,3 +31,20 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Loading Spinner */
+.loader {
+  border-top-color: #3498db;
+  animation: spin 1s infinite linear;
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  border: 0.4rem solid rgba(0, 0, 0, 0.1);
+  border-top-color: #3498db;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

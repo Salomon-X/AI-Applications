@@ -1,113 +1,178 @@
-import Image from "next/image";
+"use client";
+
+import React, { useState, useRef, useEffect } from 'react';
+import Navbar from './components/navbar';
+import Footer from './components/footer';
+import Highlights from './components/highlights';
+import HeroSection from './components/heroSection';
+import Services from './components/services';
 
 export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const [view, setView] = useState<'hero' | 'services' | 'objectIdentifier'>('hero'); // Updated state to manage views
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+  const [result, setResult] = useState<any | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedImage(file);
+      setPreviewImageUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const triggerFileSelect = () => {
+    fileInputRef.current?.click();
+  };
+
+  const classifyImage = async () => {
+    if (!selectedImage) return;
+
+    setLoading(true);
+    setResult(null);
+
+    try {
+      const reader = new FileReader();
+      reader.readAsDataURL(selectedImage);
+
+      reader.onloadend = async () => {
+        const base64Image = reader.result?.toString().split(',')[1]; // Get the base64 part
+
+        // Send the image to the API route
+        const response = await fetch('/api/identify-object', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageBase64: base64Image }),
+        });
+
+        const data = await response.json();
+
+        if (data.results) {
+          setResult(data.results); // Store the result as an object
+        } else {
+          setResult('No objects detected with sufficient confidence.');
+        }
+
+        setLoading(false);
+      };
+    } catch (error) {
+      console.error('Error identifying object:', error);
+      setResult('Failed to identify object.');
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (imgRef.current && previewImageUrl) {
+      imgRef.current.onload = () => {
+        // Force a re-render after the image has loaded to ensure bounding boxes align correctly
+        setResult(result); // Trigger a state change to cause a re-render
+      };
+    }
+  }, [previewImageUrl, result]);
+
+  const drawBoundingBox = () => {
+    if (!result || !previewImageUrl) return null;
+
+    return (
+      <div className="relative w-full h-auto">
+        <img ref={imgRef} src={previewImageUrl} alt="Selected image" className="w-full h-auto rounded-lg" />
+        {result.map((obj: any, index: number) => (
+          <div
+            key={index}
+            className="absolute border-2 border-blue-500 rounded-md"
+            style={{
+              top: `${(obj.box.ymin / imgRef.current?.naturalHeight!) * 100}%`,
+              left: `${(obj.box.xmin / imgRef.current?.naturalWidth!) * 100}%`,
+              width: `${((obj.box.xmax - obj.box.xmin) / imgRef.current?.naturalWidth!) * 100}%`,
+              height: `${((obj.box.ymax - obj.box.ymin) / imgRef.current?.naturalHeight!) * 100}%`,
+            }}
           >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+            <p className="text-white bg-blue-600 bg-opacity-75 p-1 text-xs rounded-t-md">
+              {obj.label} <span className="font-bold">({(obj.score * 100).toFixed(2)}%)</span>
+            </p>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderResults = () => {
+    if (typeof result === 'string') {
+      return <p className="text-lg text-gray-800">{result}</p>;
+    }
+
+    return (
+      <ul className="space-y-2">
+        {result.map((obj: any, index: number) => (
+          <li key={index} className="text-blue-700">
+            <span className="font-semibold">{obj.label}:</span> {(obj.score * 100).toFixed(2)}%
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen bg-gray-900 text-white">
+      <Navbar
+        onHomeClick={() => setView('hero')}
+        onServicesClick={() => setView('services')}
+      />
+
+      {view === 'hero' && (
+        <HeroSection onGetStarted={() => setView('objectIdentifier')} />
+      )}
+
+      {view === 'services' && (
+        <Services onSelectService={() => setView('objectIdentifier')} />
+      )}
+
+      {view === 'objectIdentifier' && (
+        <div className="flex-grow flex flex-col items-center justify-center p-6">
+          <h1 className="text-5xl font-extrabold text-white mb-8">Object Detection Application</h1>
+          <Highlights />
+          <div className="bg-gray-800 p-8 rounded-lg shadow-2xl w-full max-w-lg">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
             />
-          </a>
+            <button
+              onClick={triggerFileSelect}
+              className="mb-6 bg-teal-500 text-white font-semibold text-lg px-6 py-3 rounded-lg w-full hover:bg-teal-600 transition-colors duration-300"
+            >
+              Select Image
+            </button>
+            {previewImageUrl && drawBoundingBox()}
+            <button
+              onClick={classifyImage}
+              className="mt-4 bg-yellow-500 text-white font-semibold text-lg px-6 py-3 rounded-lg w-full hover:bg-yellow-600 transition-colors duration-300"
+              disabled={!selectedImage || loading}
+            >
+              {loading ? 'Identifying...' : 'Identify Object'}
+            </button>
+            {loading && (
+              <div className="flex justify-center my-4">
+                <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+              </div>
+            )}
+            {!loading && result && (
+              <div className="mt-4 bg-blue-50 p-4 rounded-lg text-gray-900">
+                <h2 className="text-2xl font-bold text-blue-600 mb-4">Detection Results</h2>
+                {renderResults()}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      <Footer />
+    </div>
   );
 }
