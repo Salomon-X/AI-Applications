@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     const response = await fetch('https://api-inference.huggingface.co/models/facebook/detr-resnet-50', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer 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`,
+        'Authorization': `Bearer ${process.env.HUGGING_FACE_TOKEN}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
