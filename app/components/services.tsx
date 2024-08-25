@@ -1,9 +1,7 @@
-// app/components/services.tsx
-
 import React from 'react';
 
 interface ServicesProps {
-  onSelectService: (service: 'hero' | 'services' | 'objectIdentifier' | 'imageToText') => void;
+  onSelectService: (service: 'hero' | 'services' | 'objectIdentifier' | 'imageToText' | 'textGeneration' | 'textSummarization') => void;
 }
 
 const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
@@ -38,7 +36,7 @@ const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
             Learn More
           </button>
         </div>
-        
+
         <div className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
           <div className="overflow-hidden rounded-md mb-4 h-48">
             <img
@@ -53,6 +51,46 @@ const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
           </p>
           <button
             onClick={() => onSelectService('imageToText')}
+            className="bg-teal-500 text-white font-semibold px-6 py-3 rounded-lg hover:bg-teal-600 transition-colors duration-300 w-full"
+          >
+            Learn More
+          </button>
+        </div>
+
+        <div className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+          <div className="overflow-hidden rounded-md mb-4 h-48">
+            <img
+              src="/gallery/text_generation/text-generation.webp"
+              alt="Text Generation"
+              className="object-cover w-full h-full"
+            />
+          </div>
+          <h2 className="text-2xl font-bold text-teal-400 mb-2">Text Generation</h2>
+          <p className="text-gray-400 mb-4">
+            Generate creative and contextually relevant text using state-of-the-art AI models.
+          </p>
+          <button
+            onClick={() => onSelectService('textGeneration')}
+            className="bg-teal-500 text-white font-semibold px-6 py-3 rounded-lg hover:bg-teal-600 transition-colors duration-300 w-full"
+          >
+            Learn More
+          </button>
+        </div>
+
+        <div className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300">
+          <div className="overflow-hidden rounded-md mb-4 h-48">
+            <img
+              src="/gallery/text_summarization/summarization.webp"
+              alt="Text Summarization"
+              className="object-cover w-full h-full"
+            />
+          </div>
+          <h2 className="text-2xl font-bold text-teal-400 mb-2">Text Summarization</h2>
+          <p className="text-gray-400 mb-4">
+            Summarize long texts using advanced AI models. Get concise and accurate summaries with ease.
+          </p>
+          <button
+            onClick={() => onSelectService('textSummarization')}
             className="bg-teal-500 text-white font-semibold px-6 py-3 rounded-lg hover:bg-teal-600 transition-colors duration-300 w-full"
           >
             Learn More
