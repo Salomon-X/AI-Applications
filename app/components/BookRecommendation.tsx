@@ -104,7 +104,7 @@ const BookRecommendation: React.FC = () => {
               <p className="text-sm">{rec.reason}</p>
               <button
                 onClick={() => fetchBookDetails(rec.title, rec.author)}
-                disabled={loadingDetails} // Disable the button while loading
+                disabled={loadingDetails}
                 className={`mt-2 bg-blue-600 text-white px-2 py-1 rounded-md hover:bg-blue-700 ${loadingDetails ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
               >
@@ -122,7 +122,7 @@ const BookRecommendation: React.FC = () => {
           <div className="mt-4 p-4 bg-gray-700 text-white rounded-md">
             <h2 className="text-2xl font-semibold mb-2">More About the Book</h2>
             <p className="mb-2">{bookDetails.description}</p>
-            <blockquote className="text-sm italic mb-2">"{bookDetails.quote}"</blockquote>
+            <blockquote className="text-sm italic mb-2">&quot;{bookDetails.quote}&quot;</blockquote>
             <a
               href={bookDetails.googleLink}
               target="_blank"
