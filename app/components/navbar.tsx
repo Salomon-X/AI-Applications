@@ -35,7 +35,7 @@ const Navbar: React.FC<NavbarProps> = ({ onHomeClick, onServicesClick }) => {
           </li>
           <li>
             <button onClick={onServicesClick} className="text-white hover:text-gray-400">
-              Services
+              Projects
             </button>
           </li>
           <li>
