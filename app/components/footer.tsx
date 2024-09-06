@@ -14,14 +14,14 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-gray-600 text-white py-4">
       <div className="container mx-auto text-center">
-        <p className="mb-2">SalomonX AI &copy; {new Date().getFullYear()}</p>
+        <p className="mb-2">A.Salomon &copy; {new Date().getFullYear()}</p>
         <p className="mb-4">
           Providing cutting-edge AI applications and data services
         </p>
         <div className="space-x-4">
           <a href="#" className="hover:underline">Privacy Policy</a>
           <a href="#" className="hover:underline">Terms of Service</a>
-          <a href="#" className="hover:underline">Contact Us</a>
+          <a href="#" className="hover:underline">Contact Me</a>
         </div>
       </div>
     </footer>

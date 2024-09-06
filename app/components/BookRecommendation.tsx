@@ -71,7 +71,7 @@ const BookRecommendation: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center p-6">
-      <h1 className="text-4xl font-bold mb-6">Book Recommendation Service</h1>
+      <h1 className="text-4xl font-bold mb-6">Book Recommendation</h1>
       <div className="flex flex-col space-y-4 w-full max-w-md">
         {books.map((book, index) => (
           <input
