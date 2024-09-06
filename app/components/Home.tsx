@@ -2,16 +2,16 @@
 
 import React from 'react';
 import HeroSection from './heroSection';
-import Services from './services';
 
 interface HomeProps {
-    onViewChange: (view: 'hero' | 'services' | 'objectIdentifier') => void;
-  }
+  onViewChange: (view: 'hero' | 'services' | 'objectIdentifier') => void;
+  onViewProjects: () => void; // Add this prop to handle project navigation
+}
 
-const Home: React.FC<HomeProps> = ({ onViewChange }) => {
+const Home: React.FC<HomeProps> = ({ onViewChange, onViewProjects }) => {
   return (
     <>
-      <HeroSection onGetStarted={() => onViewChange('services')} />
+      <HeroSection onViewProjects={onViewProjects} />
     </>
   );
 };
