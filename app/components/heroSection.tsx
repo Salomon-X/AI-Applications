@@ -54,14 +54,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onViewProjects }) => {
         <h2 className="text-3xl font-bold mb-4">Experience</h2>
         <ul className="mb-8">
           <li className="mb-4">
-            <h3 className="text-xl font-semibold">Autol Group (Dec 2021 - Present)</h3>
-            <p>Business Intelligence Manager</p>
-            <p>Managing end-to-end data pipelines through handling data at every stage...</p>
+            <h3 className="text-xl font-semibold">Data Engineering</h3>
+            
+            <p>Managing end-to-end data pipelines through handling data at every stage</p>
           </li>
           <li className="mb-4">
-            <h3 className="text-xl font-semibold">Bookingkit (May 2021 - Dec 2021)</h3>
-            <p>Customer Success Analyst</p>
-            <p>Analyzing customer data and creating reports while working closely with various departments...</p>
+            <h3 className="text-xl font-semibold">Machine learning Engineering </h3>
+            
+            <p>responsible for designing, building, and deploying ML models and systems</p>
           </li>
           {/* Add more experience items as needed */}
         </ul>
